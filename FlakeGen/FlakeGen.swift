@@ -9,11 +9,11 @@
 import Foundation
 
 private struct FlakeGenConstants {
-    static let timeBits = 32
-    static let machineBits = 24
-    static let machineBitMask = (1 << machineBits) - 1
-    static let sequenceBits = 8
-    static let sequenceBitMask = (1 << sequenceBits) - 1
+    static let timeBits: UInt32 = 32
+    static let machineBits: UInt32 = 24
+    static let machineBitMask: UInt32 = (1 << machineBits) - 1
+    static let sequenceBits: UInt32 = 8
+    static let sequenceBitMask: UInt32 = (1 << sequenceBits) - 1
 }
 
 final public class FlakeGen {
@@ -71,7 +71,7 @@ final public class FlakeGen {
             }
         }
 
-        let flake = UInt64((time - epoch) << (FlakeGenConstants.sequenceBits + FlakeGenConstants.machineBits))
+        let flake = UInt64(UInt64(time - epoch) << UInt64(FlakeGenConstants.sequenceBits + FlakeGenConstants.machineBits))
             | UInt64(machine << UInt32(FlakeGenConstants.sequenceBits))
             | UInt64(sequence)
 
