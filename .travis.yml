@@ -1,3 +1,6 @@
 language: objective-c
-xcode_project: FlakeGen.xcodeproj
-xcode_scheme: FlakeGenTests
+before_install:
+- gem install xcpretty
+script:
+- set -o pipefail
+- xcodebuild -project FlakeGen.xcodeproj -scheme "FlakeGen" test -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO | xcpretty -c
