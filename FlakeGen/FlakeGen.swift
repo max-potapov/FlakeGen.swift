@@ -14,6 +14,8 @@ private struct FlakeGenConstants {
     static let machineBitMask: UInt32 = (1 << machineBits) - 1
     static let sequenceBits: UInt32 = 8
     static let sequenceBitMask: UInt32 = (1 << sequenceBits) - 1
+    static let alphabet = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
+    static let base = 62
 }
 
 final public class FlakeGen {
@@ -38,13 +40,11 @@ final public class FlakeGen {
     }
 
     public func nextStringID() -> String {
-        let flake = nextID().reverse()
-        let encodedFlake = NSData(bytes: flake, length: flake.count).base64EncodedStringWithOptions(nil)
-        return encodedFlake.substringToIndex(encodedFlake.endIndex.predecessor())
+        return encode(nextID())
     }
 
-    public func nextID() -> [Byte] {
-        var result: [Byte]?
+    public func nextID() -> UInt64 {
+        var result: UInt64 = 0
         if dispatch_get_specific(&queue) != nil {
             result = next()
         } else {
@@ -52,10 +52,10 @@ final public class FlakeGen {
                 result = self.next()
             }
         }
-        return result!
+        return result
     }
 
-    private func next() -> [Byte] {
+    private func next() -> UInt64 {
         var time = NSDate().secondsSinceReferenceDate()
         if (lastTime < time) {
             lastTime = time
@@ -75,19 +75,21 @@ final public class FlakeGen {
             | UInt64(machine << UInt32(FlakeGenConstants.sequenceBits))
             | UInt64(sequence)
 
-        return toByteArray(flake)
+        return flake
     }
 
-    private func toByteArray<T>(var value: T) -> [Byte] {
-        return withUnsafePointer(&value) {
-            Array(UnsafeBufferPointer(start: UnsafePointer<Byte>($0), count: sizeof(T)))
+    private func encode(value: UInt64) -> String {
+        var result = ""
+        if value == 0 {
+            result.insert(FlakeGenConstants.alphabet[0], atIndex: result.startIndex)
         }
-    }
-
-    private func fromByteArray<T>(value: [Byte], _: T.Type) -> T {
-        return value.withUnsafeBufferPointer {
-            return UnsafePointer<T>($0.baseAddress).memory
+        var quotient = Int(value)
+        while (quotient > 0) {
+            let remainder = quotient % FlakeGenConstants.base
+            quotient = quotient / FlakeGenConstants.base
+            result.insert(FlakeGenConstants.alphabet[remainder], atIndex: result.startIndex)
         }
+        return result
     }
 
 }
