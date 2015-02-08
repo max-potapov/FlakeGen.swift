@@ -3,4 +3,4 @@ before_install:
 - gem install xcpretty
 script:
 - set -o pipefail
-- xcodebuild -project FlakeGen.xcodeproj -scheme "FlakeGen" test -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO | xcpretty -c
+- xcodebuild -project FlakeGen.xcodeproj -scheme "FlakeGen" -sdk iphonesimulator -configuration Release -destination "platform=iOS Simulator,name=iPhone 6" clean test | xcpretty -c
