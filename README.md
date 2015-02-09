@@ -1,7 +1,7 @@
 FlakeGen
 ========
 
-[![Build Status](https://travis-ci.org/max-potapov/FlakeGenSwift.svg)](https://travis-ci.org/max-potapov/FlakeGenSwift)
+[![Build Status](https://travis-ci.org/max-potapov/FlakeGen.swift.svg?branch=master)](https://travis-ci.org/max-potapov/FlakeGen.swift)
 
 Flake ID generator written in Swift
 
