@@ -26,7 +26,7 @@ class FlakeGenTests: XCTestCase {
     }
 
     func testStringID() {
-        XCTAssertEqual(11, countElements(flakeGen.nextStringID()))
+        XCTAssertEqual(11, count(flakeGen.nextStringID()))
     }
 
     func testLexicalCompare() {
@@ -39,8 +39,8 @@ class FlakeGenTests: XCTestCase {
         let expectation = expectationWithDescription("async test")
         var finished = 0
         let count = 512
-        var set1: NSMutableSet!
-        var set2: NSMutableSet!
+        var set1: Set<String>!
+        var set2: Set<String>!
 
         dispatch_async(queue) { [weak expectation] in
             set1 = self.getSet(count)
@@ -49,7 +49,7 @@ class FlakeGenTests: XCTestCase {
             if finished == 2 {
                 if let expectation = expectation {
                     expectation.fulfill()
-                    XCTAssertFalse(set1.intersectsSet(set2))
+                    XCTAssertTrue(set1.intersect(set2).isEmpty)
                 }
             }
         }
@@ -60,7 +60,7 @@ class FlakeGenTests: XCTestCase {
             if finished == 2 {
                 if let expectation = expectation {
                     expectation.fulfill()
-                    XCTAssertFalse(set1.intersectsSet(set2))
+                    XCTAssertTrue(set1.intersect(set2).isEmpty)
                 }
             }
         }
@@ -76,11 +76,11 @@ class FlakeGenTests: XCTestCase {
         }
     }
 
-    private func getSet(count: Int) -> NSMutableSet {
-        var set = NSMutableSet()
+    private func getSet(count: Int) -> Set<String> {
+        var set = Set<String>()
         for index in 1...count {
             let value = self.flakeGen.nextStringID()
-            set.addObject(value)
+            set.insert(value)
         }
         return set
     }
