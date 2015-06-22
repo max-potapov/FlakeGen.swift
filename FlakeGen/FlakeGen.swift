@@ -14,7 +14,7 @@ private struct FlakeGenConstants {
     static let machineBitMask: UInt32 = (1 << machineBits) - 1
     static let sequenceBits: UInt32 = 8
     static let sequenceBitMask: UInt32 = (1 << sequenceBits) - 1
-    static let alphabet = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
+    static let alphabet = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".characters)
     static let base = 62
 }
 

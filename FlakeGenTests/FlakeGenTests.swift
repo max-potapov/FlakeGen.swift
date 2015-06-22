@@ -26,7 +26,7 @@ class FlakeGenTests: XCTestCase {
     }
 
     func testStringID() {
-        XCTAssertEqual(11, count(flakeGen.nextStringID()))
+        XCTAssertEqual(11, flakeGen.nextStringID().characters.count)
     }
 
     func testLexicalCompare() {
@@ -72,13 +72,13 @@ class FlakeGenTests: XCTestCase {
 
     func testPerformance() {
         self.measureBlock() {
-            let result = self.flakeGen.nextStringID()
+            self.flakeGen.nextStringID()
         }
     }
 
     private func getSet(count: Int) -> Set<String> {
         var set = Set<String>()
-        for index in 1...count {
+        for _ in 1...count {
             let value = self.flakeGen.nextStringID()
             set.insert(value)
         }
