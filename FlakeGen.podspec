@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name         = 'FlakeGen'
-  s.version      = '1.1.0'
+  s.version      = '1.1.1'
   s.summary      = 'Flake ID Generator'
 
   s.homepage     = 'https://github.com/max-potapov/FlakeGen.swift'
