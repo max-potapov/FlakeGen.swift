@@ -127,6 +127,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 50CF50381A864D2C0060D9A1 /* Build configuration list for PBXNativeTarget "FlakeGen" */;
 			buildPhases = (
+				500DFCC01C86C8D600C35BED /* SwiftLint */,
 				50CF501D1A864D2C0060D9A1 /* Sources */,
 				50CF501E1A864D2C0060D9A1 /* Frameworks */,
 				50CF501F1A864D2C0060D9A1 /* Headers */,
@@ -210,6 +211,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		500DFCC01C86C8D600C35BED /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\nswiftlint\nelse\necho \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		50CF501D1A864D2C0060D9A1 /* Sources */ = {

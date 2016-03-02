@@ -57,13 +57,13 @@ final public class FlakeGen {
 
     private func next() -> UInt64 {
         var time = NSDate().secondsSinceReferenceDate()
-        if (lastTime < time) {
+        if lastTime < time {
             lastTime = time
             sequence = 0
         } else {
             sequence = (sequence + 1) & UInt32(FlakeGenConstants.sequenceBitMask)
             if sequence == 0 {
-                while(time == lastTime) {
+                while time == lastTime {
                     usleep(100000)
                     time = NSDate().secondsSinceReferenceDate()
                 }
@@ -84,7 +84,7 @@ final public class FlakeGen {
             result.insert(FlakeGenConstants.alphabet[0], atIndex: result.startIndex)
         }
         var quotient = Int(value)
-        while (quotient > 0) {
+        while quotient > 0 {
             let remainder = quotient % FlakeGenConstants.base
             quotient = quotient / FlakeGenConstants.base
             result.insert(FlakeGenConstants.alphabet[remainder], atIndex: result.startIndex)

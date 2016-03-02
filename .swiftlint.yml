@@ -1,0 +1,12 @@
+disabled_rules:
+  - line_length
+included:
+  - FlakeGen
+  - FlakeGenTests
+opt_in_rules:
+  - empty_count
+variable_name:
+  excluded: # excluded via string array
+    - id
+    - URL
+    - URI

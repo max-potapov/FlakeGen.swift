@@ -45,7 +45,7 @@ class FlakeGenTests: XCTestCase {
         dispatch_async(queue) { [weak expectation] in
             set1 = self.getSet(count)
             XCTAssertEqual(set1.count, count)
-            ++finished
+            finished += 1
             if finished == 2 {
                 if let expectation = expectation {
                     expectation.fulfill()
@@ -56,7 +56,7 @@ class FlakeGenTests: XCTestCase {
         dispatch_async(dispatch_get_main_queue()) { [weak expectation] in
             set2 = self.getSet(count)
             XCTAssertEqual(set2.count, count)
-            ++finished
+            finished += 1
             if finished == 2 {
                 if let expectation = expectation {
                     expectation.fulfill()
