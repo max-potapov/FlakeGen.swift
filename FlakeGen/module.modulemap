@@ -1,0 +1,6 @@
+framework module FlakeGen {
+  umbrella header "FlakeGen.h"
+
+  export *
+  module * { export * }
+}
