@@ -8,7 +8,7 @@
 
 import Foundation
 
-private struct FlakeGenConstants {
+private enum FlakeGenConstants {
     static let timeBits: UInt32 = 32
     static let machineBits: UInt32 = 24
     static let machineBitMask: UInt32 = (1 << machineBits) - 1
@@ -18,24 +18,23 @@ private struct FlakeGenConstants {
     static let base = 62
 }
 
-final public class FlakeGen {
+final public class FlakeGen: NSObject {
 
     private var machine: UInt32
     private var epoch: UInt32
     private var lastTime: UInt32
     private var sequence: UInt32
 
-    private var queueTag: UnsafeMutablePointer<Void>
-    private var queue: dispatch_queue_t
+    private let queueKey = DispatchSpecificKey<String>()
+    private let queue: DispatchQueue
 
-    public init(machineID: UInt32 = 0, epochTime: UInt32 = 0, dispatchQueue: dispatch_queue_t? = nil) {
-        queueTag = UnsafeMutablePointer<Void>(unsafeAddressOf("tag"))
-        queue = dispatchQueue != nil ? dispatchQueue! : dispatch_get_main_queue()
-        dispatch_queue_set_specific(queue, &queue, queueTag, nil)
+    public init(machineID: UInt32 = 0, epochTime: UInt32 = 0, dispatchQueue: DispatchQueue = DispatchQueue.main) {
+        queue = dispatchQueue
+        queue.setSpecific(key: queueKey, value: "queueLabel")
 
         machine = machineID & UInt32(FlakeGenConstants.machineBitMask)
         epoch = epochTime
-        lastTime = NSDate().secondsSinceReferenceDate()
+        lastTime = Date().secondsSinceReferenceDate()
         sequence = 0
     }
 
@@ -45,10 +44,10 @@ final public class FlakeGen {
 
     public func nextID() -> UInt64 {
         var result: UInt64 = 0
-        if dispatch_get_specific(&queue) != nil {
+        if DispatchQueue.getSpecific(key: queueKey) != nil {
             result = next()
         } else {
-            dispatch_sync(queue) {
+            queue.sync {
                 result = self.next()
             }
         }
@@ -56,7 +55,7 @@ final public class FlakeGen {
     }
 
     private func next() -> UInt64 {
-        var time = NSDate().secondsSinceReferenceDate()
+        var time = Date().secondsSinceReferenceDate()
         if lastTime < time {
             lastTime = time
             sequence = 0
@@ -65,7 +64,7 @@ final public class FlakeGen {
             if sequence == 0 {
                 while time == lastTime {
                     usleep(100000)
-                    time = NSDate().secondsSinceReferenceDate()
+                    time = Date().secondsSinceReferenceDate()
                 }
                 lastTime = time
             }
@@ -78,34 +77,34 @@ final public class FlakeGen {
         return flake
     }
 
-    private func encode(value: UInt64) -> String {
+    private func encode(_ value: UInt64) -> String {
         var result = ""
         if value == 0 {
-            result.insert(FlakeGenConstants.alphabet[0], atIndex: result.startIndex)
+            result.insert(FlakeGenConstants.alphabet[0], at: result.startIndex)
         }
         var quotient = Int(value)
         while quotient > 0 {
             let remainder = quotient % FlakeGenConstants.base
             quotient = quotient / FlakeGenConstants.base
-            result.insert(FlakeGenConstants.alphabet[remainder], atIndex: result.startIndex)
+            result.insert(FlakeGenConstants.alphabet[remainder], at: result.startIndex)
         }
         return result
     }
 
 }
 
-extension NSDate {
+extension Date {
 
-    func secondsSinceReferenceDate() -> UInt32 {
+    fileprivate func secondsSinceReferenceDate() -> UInt32 {
         return UInt32(self.timeIntervalSinceReferenceDate)
     }
 
-    class func date(year: Int = 1970, month: Int = 1, day: Int = 1) -> NSDate? {
-        let dateComponents = NSDateComponents()
+    fileprivate static func date(_ year: Int = 1970, month: Int = 1, day: Int = 1) -> Date? {
+        var dateComponents = DateComponents()
         dateComponents.year = year
         dateComponents.month = month
         dateComponents.day = day
-        return NSCalendar.currentCalendar().dateFromComponents(dateComponents)
+        return Calendar.current.date(from: dateComponents)
     }
 
 }

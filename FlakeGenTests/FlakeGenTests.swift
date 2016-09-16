@@ -13,11 +13,11 @@ import FlakeGen
 class FlakeGenTests: XCTestCase {
 
     var flakeGen: FlakeGen!
-    var queue: dispatch_queue_t!
+    var queue: DispatchQueue!
 
     override func setUp() {
         super.setUp()
-        queue = dispatch_queue_create("test.queue", DISPATCH_QUEUE_SERIAL)
+        queue = DispatchQueue(label: "test.queue")
         flakeGen = FlakeGen(machineID:0xFACE, dispatchQueue:queue)
     }
 
@@ -36,47 +36,43 @@ class FlakeGenTests: XCTestCase {
     }
 
     func testForUniqueness() {
-        let expectation = expectationWithDescription("async test")
+        let expectation = self.expectation(description: "async test")
         var finished = 0
         let count = 512
         var set1: Set<String>!
         var set2: Set<String>!
 
-        dispatch_async(queue) { [weak expectation] in
+        queue.async {
             set1 = self.getSet(count)
             XCTAssertEqual(set1.count, count)
             finished += 1
             if finished == 2 {
-                if let expectation = expectation {
-                    expectation.fulfill()
-                    XCTAssertTrue(set1.intersect(set2).isEmpty)
-                }
+                expectation.fulfill()
+                XCTAssertTrue(set1.intersection(set2).isEmpty)
             }
         }
-        dispatch_async(dispatch_get_main_queue()) { [weak expectation] in
+        DispatchQueue.main.async {
             set2 = self.getSet(count)
             XCTAssertEqual(set2.count, count)
             finished += 1
             if finished == 2 {
-                if let expectation = expectation {
-                    expectation.fulfill()
-                    XCTAssertTrue(set1.intersect(set2).isEmpty)
-                }
+                expectation.fulfill()
+                XCTAssertTrue(set1.intersection(set2).isEmpty)
             }
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectations(timeout: 10) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
 
     func testPerformance() {
-        self.measureBlock() {
-            self.flakeGen.nextStringID()
+        self.measure() {
+            _ = self.flakeGen.nextStringID()
         }
     }
 
-    private func getSet(count: Int) -> Set<String> {
+    private func getSet(_ count: Int) -> Set<String> {
         var set = Set<String>()
         for _ in 1...count {
             let value = self.flakeGen.nextStringID()
