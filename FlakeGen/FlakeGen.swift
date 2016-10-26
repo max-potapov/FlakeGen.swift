@@ -15,7 +15,7 @@ private enum FlakeGenConstants {
     static let sequenceBits: UInt32 = 8
     static let sequenceBitMask: UInt32 = (1 << sequenceBits) - 1
     static let alphabet = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".characters)
-    static let base = 62
+    static let base: UInt64 = 62
 }
 
 final public class FlakeGen: NSObject {
@@ -82,9 +82,9 @@ final public class FlakeGen: NSObject {
         if value == 0 {
             result.insert(FlakeGenConstants.alphabet[0], at: result.startIndex)
         }
-        var quotient = Int(value)
+        var quotient = value
         while quotient > 0 {
-            let remainder = quotient % FlakeGenConstants.base
+            let remainder = Int(quotient % FlakeGenConstants.base)
             quotient = quotient / FlakeGenConstants.base
             result.insert(FlakeGenConstants.alphabet[remainder], at: result.startIndex)
         }
