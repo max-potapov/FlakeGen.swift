@@ -48,7 +48,7 @@ class FlakeGenTests: XCTestCase {
             finished += 1
             if finished == 2 {
                 expectation.fulfill()
-                XCTAssertTrue(set1.intersection(set2).isEmpty)
+                XCTAssertTrue(set1.isDisjoint(with: set2))
             }
         }
         DispatchQueue.main.async {
@@ -57,17 +57,17 @@ class FlakeGenTests: XCTestCase {
             finished += 1
             if finished == 2 {
                 expectation.fulfill()
-                XCTAssertTrue(set1.intersection(set2).isEmpty)
+                XCTAssertTrue(set1.isDisjoint(with: set2))
             }
         }
 
         waitForExpectations(timeout: 10) { (error) in
-            XCTAssertNil(error, "\(error)")
+            XCTAssertNil(error, error!.localizedDescription)
         }
     }
 
     func testPerformance() {
-        self.measure() {
+        self.measure {
             _ = self.flakeGen.nextStringID()
         }
     }

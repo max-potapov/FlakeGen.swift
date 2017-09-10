@@ -85,7 +85,7 @@ final public class FlakeGen: NSObject {
         var quotient = value
         while quotient > 0 {
             let remainder = Int(quotient % FlakeGenConstants.base)
-            quotient = quotient / FlakeGenConstants.base
+            quotient /= FlakeGenConstants.base
             result.insert(FlakeGenConstants.alphabet[remainder], at: result.startIndex)
         }
         return result
