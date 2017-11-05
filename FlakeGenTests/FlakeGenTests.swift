@@ -18,7 +18,7 @@ class FlakeGenTests: XCTestCase {
     override func setUp() {
         super.setUp()
         queue = DispatchQueue(label: "test.queue")
-        flakeGen = FlakeGen(machineID:0xFACE, dispatchQueue:queue)
+        flakeGen = FlakeGen(machineID: 0xFACE, dispatchQueue: queue)
     }
 
     override func tearDown() {
@@ -26,7 +26,7 @@ class FlakeGenTests: XCTestCase {
     }
 
     func testStringID() {
-        XCTAssertEqual(11, flakeGen.nextStringID().characters.count)
+        XCTAssertEqual(11, flakeGen.nextStringID().count)
     }
 
     func testLexicalCompare() {
