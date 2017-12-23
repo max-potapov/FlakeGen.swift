@@ -70,9 +70,10 @@ final public class FlakeGen: NSObject {
             }
         }
 
-        let flake = UInt64(UInt64(time - epoch) << UInt64(FlakeGenConstants.sequenceBits + FlakeGenConstants.machineBits))
-            | UInt64(machine << UInt32(FlakeGenConstants.sequenceBits))
-            | UInt64(sequence)
+        let p1 = UInt64(time - epoch)
+        let p2 = UInt64(FlakeGenConstants.sequenceBits + FlakeGenConstants.machineBits)
+        let p3 = UInt64(machine << UInt32(FlakeGenConstants.sequenceBits))
+        let flake = UInt64(p1 << p2) | p3 | UInt64(sequence)
 
         return flake
     }
